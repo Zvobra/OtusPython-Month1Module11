@@ -472,7 +472,7 @@ class ContactsStorage:
 
         Raises:
             ContactsStorageError: если не задан путь или не удалось сохранить
-            контакты.
+                контакты.
         """
 
         ContactsStorageJSONWriter.write(contacts, self.path)
