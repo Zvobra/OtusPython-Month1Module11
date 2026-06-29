@@ -178,7 +178,7 @@ class PhoneBook:
 
         return self._contacts[start:end]
 
-    def _rebuild_indexes(self):
+    def _rebuild_indexes(self) -> None:
         self._contacts_id_idx = {
             contact.id: index
             for index, contact in enumerate(self._contacts)

@@ -3,12 +3,12 @@ from typing import Any, Iterable, Sequence
 
 
 class ConsoleView:
-    YES_ANSWERS = {"1", "y", "yes", "д", "да", "true", "t"}
-    NO_ANSWERS = {"0", "n", "no", "н", "нет", "false", "f"}
-    TABLE_PADDING = 2
-    TABLE_COLUMN_MAX_WIDTH = 32
-    BOLD_START = "\033[1m"
-    BOLD_RESET = "\033[0m"
+    YES_ANSWERS: set[str] = {"1", "y", "yes", "д", "да", "true", "t"}
+    NO_ANSWERS: set[str] = {"0", "n", "no", "н", "нет", "false", "f"}
+    TABLE_PADDING: int = 2
+    TABLE_COLUMN_MAX_WIDTH: int = 32
+    BOLD_START: str = "\033[1m"
+    BOLD_RESET: str = "\033[0m"
 
     @classmethod
     def print_blank_line(cls) -> None:

@@ -4,8 +4,6 @@ from typing import TypedDict, Callable
 from model import PhoneBook, ContactsStorage, AppError, Contact, ContactsStorageError, ContactNotFoundError
 from view import ConsoleView
 
-CONTACTS_PER_PAGE = 10
-
 
 class MenuAction(TypedDict):
     title: str
@@ -13,12 +11,14 @@ class MenuAction(TypedDict):
 
 
 class PhoneBookController:
+    CONTACTS_PER_PAGE: int = 10
+
     def __init__(
             self,
             phone_book: PhoneBook,
             storage: ContactsStorage,
             view: ConsoleView
-    ):
+    ) -> None:
         self.phone_book = phone_book
         self.storage = storage
         self.view = view
@@ -95,7 +95,7 @@ class PhoneBookController:
 
     def show_all_contacts(self) -> bool:
         current_page = 1
-        page_size = CONTACTS_PER_PAGE
+        page_size = self.CONTACTS_PER_PAGE
 
         def next_page() -> bool:
             nonlocal current_page
