@@ -1,3 +1,5 @@
+"""Контроллер приложения телефонного справочника."""
+
 import math
 from typing import TypedDict, Callable
 
@@ -6,11 +8,15 @@ from view import ConsoleView
 
 
 class MenuAction(TypedDict):
+    """Пункт меню с названием и обработчиком действия."""
+
     title: str
     action: Callable[[], bool]
 
 
 class PhoneBookController:
+    """Контроллер телефонного справочника."""
+
     CONTACTS_PER_PAGE: int = 10
 
     def __init__(
@@ -19,11 +25,22 @@ class PhoneBookController:
             storage: ContactsStorage,
             view: ConsoleView
     ) -> None:
+        """
+        Инициализация контроллера телефонного справочника.
+
+        Args:
+            phone_book: объект телефонного справочника.
+            storage: хранилище контактов.
+            view: консольное представление.
+        """
+
         self.phone_book = phone_book
         self.storage = storage
         self.view = view
 
     def run(self) -> None:
+        """Запуск основного цикла приложения."""
+
         if not self.load_contacts():
             return
 
@@ -62,6 +79,12 @@ class PhoneBookController:
             pass
 
     def load_contacts(self) -> bool:
+        """
+        Загрузка контактов при старте приложения.
+
+        Returns: удалось ли загрузить контакты.
+        """
+
         path = self.view.input_contacts_path("contacts.json")
         if not path:
             path = "contacts.json"
@@ -82,6 +105,12 @@ class PhoneBookController:
         return True
 
     def exit_app(self) -> bool:
+        """
+        Выход из приложения.
+
+        Returns: нужно ли продолжать основной цикл приложения.
+        """
+
         if not self.phone_book.has_changes:
             return False
 
@@ -94,10 +123,22 @@ class PhoneBookController:
         return False
 
     def show_all_contacts(self) -> bool:
+        """
+        Отображение всех контактов с постраничной навигацией.
+
+        Returns: нужно ли продолжать основной цикл приложения.
+        """
+
         current_page = 1
         page_size = self.CONTACTS_PER_PAGE
 
         def next_page() -> bool:
+            """
+            Переход на следующую страницу.
+
+            Returns: нужно ли продолжать просмотр списка контактов.
+            """
+
             nonlocal current_page
 
             if current_page == pages_count:
@@ -107,6 +148,12 @@ class PhoneBookController:
             return True
 
         def previous_page() -> bool:
+            """
+            Переход на предыдущую страницу.
+
+            Returns: нужно ли продолжать просмотр списка контактов.
+            """
+
             nonlocal current_page
 
             if current_page == 1:
@@ -116,6 +163,12 @@ class PhoneBookController:
             return True
 
         def select_page() -> bool:
+            """
+            Выбор страницы списка контактов.
+
+            Returns: нужно ли продолжать просмотр списка контактов.
+            """
+
             nonlocal current_page
 
             selected_page = self.view.input_page_number(
@@ -178,6 +231,12 @@ class PhoneBookController:
         return True
 
     def search_contacts(self) -> bool:
+        """
+        Поиск контактов по введенному запросу.
+
+        Returns: нужно ли продолжать основной цикл приложения.
+        """
+
         self.view.print_title("Поиск контактов")
 
         search = self.view.input_search_query()
@@ -209,6 +268,12 @@ class PhoneBookController:
         return True
 
     def add_contact(self) -> bool:
+        """
+        Добавление нового контакта.
+
+        Returns: нужно ли продолжать основной цикл приложения.
+        """
+
         self.view.print_title("Добавление контакта")
         contact_data = self.view.input_contact_data()
 
@@ -233,6 +298,15 @@ class PhoneBookController:
         return True
 
     def select_contact(self, visible_contacts: list[Contact] | None = None) -> bool:
+        """
+        Выбор контакта для просмотра, редактирования или удаления.
+
+        Args:
+            visible_contacts: список контактов, доступных для выбора.
+
+        Returns: нужно ли продолжать основной цикл приложения.
+        """
+
         input_contact_id = self.view.input_contact_id()
         if input_contact_id is None:
             return True
@@ -257,22 +331,46 @@ class PhoneBookController:
                 return True
 
         def edit_contact() -> bool:
+            """
+            Редактирование выбранного контакта.
+
+            Returns: нужно ли продолжать работу с выбранным контактом.
+            """
+
             nonlocal contact
             contact_name: str | None = None
             contact_phone: str | None = None
             contact_comment: str | None = None
 
             def edit_contact_name() -> bool:
+                """
+                Редактирование имени контакта.
+
+                Returns: нужно ли продолжать редактирование контакта.
+                """
+
                 nonlocal contact_name
                 contact_name = self.view.input_field("Имя")
                 return True
 
             def edit_contact_phone() -> bool:
+                """
+                Редактирование телефона контакта.
+
+                Returns: нужно ли продолжать редактирование контакта.
+                """
+
                 nonlocal contact_phone
                 contact_phone = self.view.input_field("Телефон")
                 return True
 
             def edit_contact_comment() -> bool:
+                """
+                Редактирование комментария контакта.
+
+                Returns: нужно ли продолжать редактирование контакта.
+                """
+
                 nonlocal contact_comment
                 contact_comment = self.view.input_field("Комментарий")
                 return True
@@ -308,6 +406,12 @@ class PhoneBookController:
             return True
 
         def delete_contact() -> bool:
+            """
+            Удаление выбранного контакта.
+
+            Returns: нужно ли продолжать работу с выбранным контактом.
+            """
+
             self.phone_book.delete_contact(contact_id)
             if visible_contacts is not None:
                 visible_contacts.remove(contact)
@@ -344,6 +448,15 @@ class PhoneBookController:
         return True
 
     def save_contacts(self, is_exit: bool = False) -> bool:
+        """
+        Сохранение контактов в хранилище.
+
+        Args:
+            is_exit: выполняется ли сохранение перед выходом из приложения.
+
+        Returns: нужно ли продолжать основной цикл приложения.
+        """
+
         try:
             self.storage.save_contacts(self.phone_book.get_contacts())
         except ContactsStorageError as err:
@@ -355,6 +468,15 @@ class PhoneBookController:
         return not is_exit
 
     def _process_actions(self, actions: list[MenuAction]) -> bool:
+        """
+        Обработка выбранного пункта меню.
+
+        Args:
+            actions: список доступных действий меню.
+
+        Returns: нужно ли продолжать текущий цикл меню.
+        """
+
         item = self.view.choose_menu_item(
             [action["title"] for action in actions],
         )

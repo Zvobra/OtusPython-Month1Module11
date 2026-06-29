@@ -1,9 +1,13 @@
+"""Точка входа приложения телефонного справочника."""
+
 from controller import PhoneBookController
 from model import PhoneBook, ContactsStorage
 from view import ConsoleView
 
 
 def run_app() -> None:
+    """Создание зависимостей и запуск приложения."""
+
     storage = ContactsStorage()
     phone_book = PhoneBook()
     view = ConsoleView()
