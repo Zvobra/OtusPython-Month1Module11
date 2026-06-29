@@ -126,7 +126,8 @@ class PhoneBookController:
 
             return True
 
-        while True:
+        is_showing = True
+        while is_showing:
             self.view.print_title("Список контактов")
 
             contacts_count = self.phone_book.get_contacts_count()
@@ -151,7 +152,7 @@ class PhoneBookController:
             self.view.print_info(f"Всего контактов: {contacts_count}")
             self.view.print_info(f"Страница {current_page} из {pages_count}")
 
-            if not self._process_actions([
+            is_showing = self._process_actions([
                 {
                     "title": "Следующая страница",
                     "action": next_page,
@@ -172,8 +173,7 @@ class PhoneBookController:
                     "title": "Назад",
                     "action": lambda: False
                 },
-            ]):
-                break
+            ])
 
         return True
 
@@ -187,14 +187,15 @@ class PhoneBookController:
             self.view.print_info("Ничего не найдено")
             return True
 
-        while True:
+        is_searching = True
+        while is_searching:
             self.view.print_contacts([
                 [contact.id, contact.name, contact.phone, contact.comment]
                 for contact in found_contacts
             ])
             self.view.print_info(f"Найдено контактов: {len(found_contacts)}")
 
-            if not self._process_actions([
+            is_searching = self._process_actions([
                 {
                     "title": "Выбор контакта",
                     "action": lambda: self.select_contact(found_contacts),
@@ -203,8 +204,7 @@ class PhoneBookController:
                     "title": "Назад",
                     "action": lambda: False
                 },
-            ]):
-                break
+            ])
 
         return True
 
@@ -258,9 +258,9 @@ class PhoneBookController:
 
         def edit_contact() -> bool:
             nonlocal contact
-            contact_name = None
-            contact_phone = None
-            contact_comment = None
+            contact_name: str | None = None
+            contact_phone: str | None = None
+            contact_comment: str | None = None
 
             def edit_contact_name() -> bool:
                 nonlocal contact_name
@@ -277,8 +277,9 @@ class PhoneBookController:
                 contact_comment = self.view.input_field("Комментарий")
                 return True
 
-            while True:
-                if not self._process_actions([
+            is_editing = True
+            while is_editing:
+                is_editing = self._process_actions([
                     {
                         "title": "Редактировать \"Имя\"",
                         "action": edit_contact_name,
@@ -295,8 +296,7 @@ class PhoneBookController:
                         "title": "Назад",
                         "action": lambda: False
                     },
-                ]):
-                    break
+                ])
 
             contact = self.phone_book.update_contact(
                 contact_id=contact_id,
@@ -316,7 +316,8 @@ class PhoneBookController:
 
             return False
 
-        while True:
+        is_selected = True
+        while is_selected:
             self.view.print_title("Выбран контакт:")
             self.view.print_contact([
                 contact.id,
@@ -325,7 +326,7 @@ class PhoneBookController:
                 contact.comment,
             ])
 
-            if not self._process_actions([
+            is_selected = self._process_actions([
                 {
                     "title": "Редактировать",
                     "action": edit_contact,
@@ -338,8 +339,7 @@ class PhoneBookController:
                     "title": "Назад",
                     "action": lambda: False
                 },
-            ]):
-                break
+            ])
 
         return True
 

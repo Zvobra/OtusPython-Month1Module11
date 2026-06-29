@@ -138,17 +138,19 @@ class ConsoleView:
 
     @classmethod
     def input_yes_no(cls, question: str) -> bool:
-        while True:
-            answer = input(f"{question} (да/нет): ")
-            answer = answer.strip().lower()
+        answer: bool | None = None
+        while answer is None:
+            answer_input = input(f"{question} (да/нет): ")
+            answer_input = answer_input.strip().lower()
 
-            if answer in cls.YES_ANSWERS:
-                return True
+            if answer_input in cls.YES_ANSWERS:
+                answer = True
+            elif answer_input in cls.NO_ANSWERS:
+                answer = False
+            else:
+                cls.print_error("Введите да или нет")
 
-            if answer in cls.NO_ANSWERS:
-                return False
-
-            cls.print_error("Введите да или нет")
+        return answer
 
     @classmethod
     def choose_menu_item(cls, items: list[str]) -> int | None:
